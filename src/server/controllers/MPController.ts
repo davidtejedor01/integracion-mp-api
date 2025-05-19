@@ -91,12 +91,23 @@ export default class MPController {
 
                 if (mpPay.status === "approved") {
                     const { name, last_name, dni } = mpPay.metadata || {};
-                    const userCompleto = `${name} ${last_name} con DNI: ${dni}`;
+                    const userCompleto = `${name} ${last_name}`;
+                    const userDNI = `${dni}`;
                     const monto = mpPay.transaction_amount;
+                    const fechaPago = mpPay.date_approved || new Date().toISOString();
 
                     await sendMsj(
-                        "Pago aprobado;",
-                        `Pago de $${monto} aprobado por ${userCompleto}.`
+                        "✅ Pago aprobado",
+                        `🧾 Se ha confirmado un nuevo pago.\n
+                        💵 Monto: $${monto}
+                        👤 Pagado por: ${userCompleto}
+                        🆔 DNI: ${userDNI}
+                        📅 Fecha de pago: ${new Date(fechaPago).toLocaleString('es-AR', {
+                            dateStyle: 'medium',
+                            timeStyle: 'short',
+                            timeZone: 'America/Argentina/Buenos_Aires'
+                        })}
+                        Por favor, verificar el retiro correspondiente.`
                     );
                 }
             }
